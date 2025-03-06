@@ -1,13 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import Helmet from 'react-helmet';
 import './index.css';
-import App from './App';
+import SearchField from './front-end/SearchField';
 import reportWebVitals from './reportWebVitals';
+import tabFavicon from './assets/image.ico'
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
+ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Helmet 
+    {...{
+      title: 'git-search',
+      link: [{rel: 'icon', href: tabFavicon}]
+    }}>
+    <SearchField />
+    </Helmet>
   </React.StrictMode>
 );
 

@@ -1,0 +1,28 @@
+.match {
+    border-bottom: 1px solid #e1e4e8;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.file-path {
+    font-weight: bold;
+    color: #0366d6;
+}
+
+.line-number {
+    font-size: 12px;
+    color: #586069;
+}
+
+.match-content {
+    background-color: #f6f8fa;
+    display: block;
+    padding: 5px;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+.highlight {
+    background-color: yellow;
+    font-weight: bold;
+}
