@@ -1,61 +1,40 @@
-import React from 'react';
-import { Input, Label } from '@mui/icons-material';
+import React from "react";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import TextField from "@mui/material/TextField";
+import "../../styles.css";
 
-const closeIcon = {
-    right: '2%',
-    top: '15%',
-    // svg: 
-};
+const SearchBox = ({ props }) => {
+  const { tooltipLabel, label, setInput } = props;
 
-const tooltipIcon = {
-    marginLeft: -5,
-};
-
-const tooltipButton = {
-    padding: 0,
-};
-
-const SearchBox = ({props}) => {
-    const {tooltip, label, id, input, setInput} = props;
-
-    const onChange = (event) => {
-        setInput(event?.target?.value);
-    };
-
-    const clearText = () => {
-        setInput('')
-    };
-
-    return (
-        <div>
-            <div>
-                <Label>{label}</Label>
-                <Tooltip>
-                    {tooltip}
-                </Tooltip>
-            </div>
-            <form>
-                <div className='position-relative'>
-                    <Input  
-                        id={id}
-                        onChange={onChange}
-                        value={input}
-                        required={true}
-                    >
-                        {input && (
-                            <IconButton 
-                                className='position-absolute'
-                                styleType='tertiary'
-                                theme={closeIcon}
-                                onClick={clearText}
-                                icon={<GlyphClose/>}
-                            />
-                        )}
-                    </Input>
-                </div>
-            </form>
+  const onChange = (event) => {
+    setInput(event?.target?.value);
+  };
+  console.log(tooltipLabel);
+  return (
+    <div>
+      <div
+        style={{
+          gap: 0,
+          display: "inline-flex",
+          whiteSpace: "nowrap",
+          alignItems: "center",
+        }}>
+        <p>{label}</p>
+        <Tooltip title={tooltipLabel} placement='right-start'>
+          <IconButton>
+            <InfoOutlinedIcon />
+          </IconButton>
+        </Tooltip>
+      </div>
+      <form>
+        <div className='inline-container' style={{ padding: 0 }}>
+          <TextField id='outlined-search' type='search' onChange={onChange} />
         </div>
-    )
-}
+      </form>
+    </div>
+  );
+};
 
 export default SearchBox;
