@@ -4,14 +4,15 @@ import Tooltip from "@mui/material/Tooltip";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import TextField from "@mui/material/TextField";
 import "../../styles.css";
+import { X, Filter } from "lucide-react";
 
 const SearchBox = ({ props }) => {
-  const { tooltipLabel, label, setInput } = props;
+  const { tooltip, label, setInput, onCloseClick } = props;
 
   const onChange = (event) => {
     setInput(event?.target?.value);
   };
-  console.log(tooltipLabel);
+  console.log(tooltip);
   return (
     <div>
       <div
@@ -22,7 +23,7 @@ const SearchBox = ({ props }) => {
           alignItems: "center",
         }}>
         <p>{label}</p>
-        <Tooltip title={tooltipLabel} placement='right-start'>
+        <Tooltip title={tooltip} placement='right-start'>
           <IconButton>
             <InfoOutlinedIcon />
           </IconButton>
@@ -30,7 +31,7 @@ const SearchBox = ({ props }) => {
       </div>
       <form>
         <div className='inline-container' style={{ padding: 0 }}>
-          <TextField id='outlined-search' type='search' onChange={onChange} />
+          <TextField size='small' id='outlined-search' type='search' onChange={onChange} />
         </div>
       </form>
     </div>

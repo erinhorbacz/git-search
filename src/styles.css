@@ -27,7 +27,7 @@ label {
 
 .match {
   border-bottom: 1px solid #e1e4e8;
-  padding: 10px;
+  padding: 10px 0px 10px;
   margin-bottom: 10px;
 }
 
@@ -46,7 +46,8 @@ label {
   display: block;
   padding: 5px;
   border-radius: 4px;
-  font-family: monospace;
+  font-family: sans-serif;
+  font-weight: lighter;
 }
 
 .highlight {
@@ -58,6 +59,7 @@ label {
 .filter-container {
   position: relative;
   display: inline-block;
+  margin: 10px;
 }
 
 /* Filter button icon */
@@ -94,12 +96,11 @@ label {
 }
 
 /* Header section */
-.filter-header {
+/* .filter-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  /* margin-bottom: 0px; */
-}
+  align-items: center; */
+/* } */
 
 /* Reset button */
 .reset-button {

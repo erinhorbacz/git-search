@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SearchBox from "./components/SearchBox";
 import SearchButton from "./components/SearchButton";
 import SearchOutput from "./SearchOutput";
-import { searchBranch } from "../back-end/search";
+import { searchRepo, getBranches } from "../back-end/search";
 import "../styles.css";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
@@ -10,37 +10,72 @@ import Alert from "@mui/material/Alert";
 const SearchField = () => {
   const [matches, setMatches] = useState([]);
   const [keyWord, setKeyWord] = useState("");
-  const [pathToRepo, setPathToRepo] = useState("");
+  const [repoLink, setRepoLink] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState();
+  const [branches, setBranches] = useState();
 
   const handleSearch = async () => {
-    if (pathToRepo === "" || keyWord === "") {
-      setLoading(false);
+    setError();
+    if (repoLink === "" || keyWord === "") {
+      console.log("these are the inputs", repoLink, keyWord);
       setMatches([]);
-      setError("Input required. Please enter a value and try again.");
+      setError("Input required. Please enter a value in both text boxes and try again.");
       return;
     }
-    console.log(pathToRepo, keyWord);
-    const returnedMatches = await searchBranch(keyWord, pathToRepo).then((data) => data);
-    if (returnedMatches[0]?.error) {
-      const parts = returnedMatches[0]?.error?.split(":");
-      setLoading(false);
-      setMatches([]);
-      setError(
-        `There is an issue with that file path. ${parts[parts.length - 1]}: ${
-          parts[parts.length - 2]
-        }`
-      );
-      return;
+    const splitRepo = repoLink.split("/");
+    const repo = splitRepo.pop();
+    const owner = splitRepo.pop();
+    await searchRepo(keyWord, owner, repo, setMatches, setError);
+    const gitBranches = await getBranches(owner, repo);
+    console.log("git branches are", gitBranches);
+    if (gitBranches) {
+      setBranches(gitBranches);
+    } else {
+      setBranches([...new Set(matches?.map((match) => match?.branch))]);
     }
-    if (returnedMatches.length === 0) {
-      setLoading(false);
-      setMatches("no output");
-      return;
-    }
+  };
+
+  useEffect(() => {
     setLoading(false);
-    setMatches(returnedMatches);
+  }, [matches]);
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      console.log("enter button was pressed");
+      setLoading(true);
+      handleSearch();
+    }
+  };
+
+  const getSearchScreen = () => {
+    if (loading) {
+      return (
+        <div className='flex justify-center' style={{ flexAlign: "center" }}>
+          <CircularProgress />
+        </div>
+      );
+    }
+    return (
+      <>
+        {!!error && <Alert severity='error'>{error}</Alert>}
+        {matches?.length > 0 && matches !== "no ouput" && (
+          <SearchOutput
+            props={{
+              matches,
+              keyWord,
+              repoLink,
+              branches,
+            }}
+          />
+        )}
+        {matches === "no ouput" && (
+          <p style={{ flexAlign: "right", justifyContent: "right" }}>
+            No matches found ૮ ⸝⸝o̴̶̷᷄ ·̭ o̴̶̷̥᷅⸝⸝ ྀིა
+          </p>
+        )}
+      </>
+    );
   };
 
   return (
@@ -48,41 +83,27 @@ const SearchField = () => {
       <div className='inline-container'>
         <SearchBox
           props={{
-            tooltipLabel: "Input the text you want to search for",
+            tooltip: "Input text to search for",
             label: "Text to Match",
+            id: "textToMatch",
+            input: keyWord,
             setInput: setKeyWord,
+            onKeyDown: handleKeyDown,
           }}
         />
         <SearchBox
           props={{
-            tooltipLabel: "Input the global path to the local repository you want to search in",
-            label: "Path to Local Repo",
-            setInput: setPathToRepo,
+            tooltip: "Link to the master branch of the repository to search",
+            label: "Link to Repo",
+            id: "pathToRepo",
+            input: repoLink,
+            setInput: setRepoLink,
+            onKeyDown: handleKeyDown,
           }}
         />
-        <SearchButton handleSearch={handleSearch} setLoading={setLoading} setError={setError} />
+        <SearchButton handleSearch={handleSearch} setLoading={setLoading} />
       </div>
-      <div style={{ padding: "10px", paddingTop: "20px" }}>
-        {loading && (
-          <div className='flex justify-center' style={{ flexAlign: "center" }}>
-            <CircularProgress />
-          </div>
-        )}
-        {!!error && <Alert severity='error'>{error}</Alert>}
-        {matches.length > 0 && matches !== "no output" && !loading && (
-          <SearchOutput
-            props={{
-              matches,
-              keyWord,
-            }}
-          />
-        )}
-        {matches === "no output" && !loading && (
-          <p style={{ flexAlign: "right", justifyContent: "right" }}>
-            No matches found ૮ ⸝⸝o̴̶̷᷄ ·̭ o̴̶̷̥᷅⸝⸝ ྀིა
-          </p>
-        )}
-      </div>
+      <div style={{ padding: "10px", paddingTop: "20px" }}>{getSearchScreen()}</div>
     </div>
   );
 };
